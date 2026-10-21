@@ -353,7 +353,6 @@ static int read_dht22_dat() {
             
             // 显示到 OLED
             if (i2c_fd >= 0) {
-                // 【修改点 2】：把 2/4 页改成 0/2 页，确保显示在最上面可见区域
                 oled_draw_string(0, 0, "                ");
                 oled_draw_string(2, 0, "                ");
                 char temp_buf[32];
