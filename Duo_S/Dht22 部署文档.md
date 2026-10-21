@@ -121,7 +121,8 @@ static int DHTPIN = 23;
 static int dht22_dat[5] = {0, 0, 0, 0, 0};
 
 // ========== OLED 配置 ==========
-#define I2C_DEV "/dev/i2c-4"
+// 【修改点 1】：把 i2c-4 改成 i2c-1
+#define I2C_DEV "/dev/i2c-1"
 #define OLED_ADDR 0x3C
 static int i2c_fd = -1;
 
@@ -350,23 +351,24 @@ static int read_dht22_dat() {
                 t *= -1;
 
             printf("Humidity = %.2f %% Temperature = %.2f *C \n", h, t);
-            // 显示到 OLED（仅当 I2C 初始化成功时）
+            
+            // 显示到 OLED
             if (i2c_fd >= 0) {
-                // 清空两行旧内容，防止残留
+                // 【修改点 2】：把 2/4 页改成 0/2 页，确保显示在最上面可见区域
+                oled_draw_string(0, 0, "                ");
                 oled_draw_string(2, 0, "                ");
-                oled_draw_string(4, 0, "                ");
                 char temp_buf[32];
                 snprintf(temp_buf, sizeof(temp_buf), "Temp:%.1fC", t);
-                oled_draw_string(2, 0, temp_buf);
+                oled_draw_string(0, 0, temp_buf);
                 char hum_buf[32];
                 snprintf(hum_buf, sizeof(hum_buf), "Hum:%.1f%%", h);
-                oled_draw_string(4, 0, hum_buf);
+                oled_draw_string(2, 0, hum_buf);
             }
             return 1;
         } else {
             printf("Data not good, skip\n");
             if (i2c_fd >= 0) {
-                oled_draw_string(2, 0, "Sensor Error!   ");
+                oled_draw_string(0, 0, "Sensor Error!   ");
             }
             return 0;
         }
@@ -389,7 +391,7 @@ int main() {
         printf("Invalid GPIO %d\n", DHTPIN);
     }
 
-    // 初始化 OLED（I2C-4，地址 0x3C）
+    // 初始化 OLED（I2C-1，地址 0x3C）
     i2c_fd = open(I2C_DEV, O_RDWR);
     if (i2c_fd >= 0 && ioctl(i2c_fd, I2C_SLAVE, OLED_ADDR) >= 0) {
         oled_init();
@@ -473,6 +475,10 @@ ssh root@192.168.42.1
 # 配置引脚功能
 
 duo-pinmux -w B15/B15
+
+duo-pinmux -w B18/IIC1_SCL
+
+duo-pinmux -w B11/IIC1_SDA
 
 # 运行测试
 
