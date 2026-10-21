@@ -121,7 +121,6 @@ static int DHTPIN = 23;
 static int dht22_dat[5] = {0, 0, 0, 0, 0};
 
 // ========== OLED 配置 ==========
-// 【修改点 1】：把 i2c-4 改成 i2c-1
 #define I2C_DEV "/dev/i2c-1"
 #define OLED_ADDR 0x3C
 static int i2c_fd = -1;
