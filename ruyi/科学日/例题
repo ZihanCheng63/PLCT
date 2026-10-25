@@ -1,130 +1,62 @@
+/*
+ * dht22_led_demo_simple.c
+ * 简化版：读取 DHT22 温湿度，温度 > 30°C 时点亮 LED
+ * 用法：gcc -o dht22_led_demo dht22_led_demo_simple.c -lwiringx
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <unistd.h>
-#include <string.h>
 #include <time.h>
-#include <fcntl.h>
+#include <wiringx.h>
 
-// ============================================
-// 引脚配置（根据你的实际接线修改）
-// ============================================
-// DHT22 DATA 引脚：A16 -> 系统 GPIO 编号 = 496
-#define DHT22_SYSGPIO  496
+// 引脚定义
+#define DHTPIN 23   // DHT22 数据引脚
+#define LEDPIN 21   // LED 控制引脚
 
-// LED 引脚：如果外接了 LED 请修改这里，否则用板载 LED
-// 板载 LED 的系统 GPIO 编号是 509
-#define LED_SYSGPIO    509
-
-// ============================================
-// Sysfs GPIO 操作函数
-// ============================================
-
-static int gpio_export(int gpio) {
-    int fd, len;
-    char buf[64];
-    fd = open("/sys/class/gpio/export", O_WRONLY);
-    if (fd < 0) return -1;
-    len = snprintf(buf, sizeof(buf), "%d", gpio);
-    write(fd, buf, len);
-    close(fd);
-    return 0;
-}
-
-static int gpio_unexport(int gpio) {
-    int fd, len;
-    char buf[64];
-    fd = open("/sys/class/gpio/unexport", O_WRONLY);
-    if (fd < 0) return -1;
-    len = snprintf(buf, sizeof(buf), "%d", gpio);
-    write(fd, buf, len);
-    close(fd);
-    return 0;
-}
-
-static int gpio_set_dir(int gpio, const char* dir) {
-    char path[64];
-    snprintf(path, sizeof(path), "/sys/class/gpio/gpio%d/direction", gpio);
-    int fd = open(path, O_WRONLY);
-    if (fd < 0) return -1;
-    write(fd, dir, strlen(dir));
-    close(fd);
-    return 0;
-}
-
-static int gpio_set_value(int gpio, int value) {
-    char path[64];
-    snprintf(path, sizeof(path), "/sys/class/gpio/gpio%d/value", gpio);
-    int fd = open(path, O_WRONLY);
-    if (fd < 0) return -1;
-    if (value)
-        write(fd, "1", 1);
-    else
-        write(fd, "0", 1);
-    close(fd);
-    return 0;
-}
-
-static int gpio_get_value(int gpio) {
-    char path[64];
-    char buf;
-    snprintf(path, sizeof(path), "/sys/class/gpio/gpio%d/value", gpio);
-    int fd = open(path, O_RDONLY);
-    if (fd < 0) return -1;
-    read(fd, &buf, 1);
-    close(fd);
-    return (buf == '1') ? 1 : 0;
-}
-
-void delayMicroseconds(int us) {
-    usleep(us);
-}
-
-// ============================================
 // DHT22 读取函数
-// ============================================
-
-int read_dht22(int data_gpio, float *temperature, float *humidity) {
-    uint8_t data[5] = {0};
+int read_dht22(float *temperature, float *humidity) {
+    uint8_t data[5] = {0, 0, 0, 0, 0};
     
     // 1. 发送起始信号
-    gpio_set_dir(data_gpio, "out");
-    gpio_set_value(data_gpio, 1);
-    delayMicroseconds(500000);  // 500ms
-    gpio_set_value(data_gpio, 0);
-    delayMicroseconds(20000);   // 20ms
-    gpio_set_dir(data_gpio, "in");
+    pinMode(DHTPIN, PINMODE_OUTPUT);
+    digitalWrite(DHTPIN, HIGH);
+    delay(500);              // 改用 delay，更稳定
+    digitalWrite(DHTPIN, LOW);
+    delay(20);               // 20ms 起始信号
+    pinMode(DHTPIN, PINMODE_INPUT);
     
-    // 2. 等待 DHT22 响应
+    // 2. 等待响应（简单超时）
     int timeout = 0;
-    while(gpio_get_value(data_gpio) == 1 && timeout < 1000) {
+    while(digitalRead(DHTPIN) == HIGH && timeout < 1000) {
         delayMicroseconds(1);
         timeout++;
     }
     if(timeout >= 1000) return 0;
     
-    while(gpio_get_value(data_gpio) == 0 && timeout < 1000) {
+    while(digitalRead(DHTPIN) == LOW && timeout < 1000) {
         delayMicroseconds(1);
         timeout++;
     }
     if(timeout >= 1000) return 0;
     
-    while(gpio_get_value(data_gpio) == 1 && timeout < 1000) {
+    while(digitalRead(DHTPIN) == HIGH && timeout < 1000) {
         delayMicroseconds(1);
         timeout++;
     }
     if(timeout >= 1000) return 0;
     
-    // 3. 读取 40 位数据
+    // 3. 读取40位数据
     for(int i = 0; i < 40; i++) {
-        while(gpio_get_value(data_gpio) == 0);
+        while(digitalRead(DHTPIN) == LOW);
         
         int duration = 0;
-        while(gpio_get_value(data_gpio) == 1 && duration < 100) {
+        while(digitalRead(DHTPIN) == HIGH && duration < 100) {
             delayMicroseconds(1);
             duration++;
         }
         
+        // 根据高电平持续时间判断0或1
         if(duration > 30) {
             data[i/8] |= (1 << (7 - (i % 8)));
         }
@@ -141,48 +73,63 @@ int read_dht22(int data_gpio, float *temperature, float *humidity) {
     return 0;
 }
 
-// ============================================
-// 主函数
-// ============================================
-
 int main() {
-    // 导出 GPIO
-    gpio_export(DHT22_SYSGPIO);
-    gpio_export(LED_SYSGPIO);
-    usleep(100000);  // 等待系统处理
+    // 初始化 WiringX
+    if(wiringXSetup("milkv_duo", NULL) == -1) {
+        printf("WiringX 初始化失败\n");
+        return -1;
+    }
     
-    // 设置 LED 为输出，初始低电平
-    gpio_set_dir(LED_SYSGPIO, "out");
-    gpio_set_value(LED_SYSGPIO, 0);
+    // 初始化 LED 引脚
+    pinMode(LEDPIN, PINMODE_OUTPUT);
+    digitalWrite(LEDPIN, LOW);
     
     printf("\n========================================\n");
     printf("  DHT22 温湿度传感器 + LED 控制\n");
-    printf("  DATA 引脚: A16 (系统 GPIO %d)\n", DHT22_SYSGPIO);
     printf("  温度 > 30°C 时 LED 点亮\n");
     printf("  按 Ctrl+C 退出\n");
     printf("========================================\n\n");
     
     float temp, humi;
+    int read_count = 0;
+    int fail_count = 0;
     
     while(1) {
-        if(read_dht22(DHT22_SYSGPIO, &temp, &humi)) {
+        if(read_dht22(&temp, &humi)) {
+            // 读取成功
+            read_count++;
+            fail_count = 0;
+            
             time_t now = time(NULL);
             struct tm *tm_info = localtime(&now);
             
+            // 控制 LED
             if(temp > 30.0) {
-                gpio_set_value(LED_SYSGPIO, 1);
+                digitalWrite(LEDPIN, HIGH);
                 printf("[%02d:%02d:%02d] ✓ 温度:%.1f°C 湿度:%.1f%% → LED 亮\n",
                        tm_info->tm_hour, tm_info->tm_min, tm_info->tm_sec, temp, humi);
             } else {
-                gpio_set_value(LED_SYSGPIO, 0);
+                digitalWrite(LEDPIN, LOW);
                 printf("[%02d:%02d:%02d] ✓ 温度:%.1f°C 湿度:%.1f%% → LED 灭\n",
                        tm_info->tm_hour, tm_info->tm_min, tm_info->tm_sec, temp, humi);
             }
         } else {
-            printf("读取失败，检查 DHT22 接线和上拉电阻\n");
+            // 读取失败
+            fail_count++;
+            printf("读取失败 (%d/5)，检查 DHT22 接线\n", fail_count);
+            
+            // 连续失败5次，可能是硬件问题
+            if(fail_count >= 5) {
+                printf("连续读取失败，请检查：\n");
+                printf("1. DHT22 是否正确连接到 GPIO %d\n", DHTPIN);
+                printf("2. 是否需要上拉电阻（4.7kΩ 到 3.3V）\n");
+                printf("3. 传感器是否损坏\n");
+                fail_count = 0; // 重置计数，继续尝试
+            }
         }
         
-        delayMicroseconds(2000000);  // 2秒
+        // 等待2秒（DHT22 采样周期至少2秒）
+        delay(2000);
     }
     
     return 0;
