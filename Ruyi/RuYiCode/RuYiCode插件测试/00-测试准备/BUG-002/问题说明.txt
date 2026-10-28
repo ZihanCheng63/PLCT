@@ -1,0 +1,31 @@
+BUG-002 命令面板命令数量缺失
+
+插件版本：0.4.9（扩展面板右侧「安装」栏显示）
+平台：Windows
+
+现象：
+文档 7.2 明确列出 29 条 RuyiCode 命令，按 4 组分布：
+- 引擎与连接：8 条
+- ruyi-server 部署：7 条
+- 路径配置：6 条
+- 记忆系统：8 条
+
+实际 Ctrl+Shift+P 输入 RuyiCode 后，仅显示 17 条，
+缺失 13 条，具体为：
+
+【ruyi-server 部署组 7 条全部缺失】
+- 自动部署并启动 ruyi-server
+- 停止 ruyi-server
+- 查看 ruyi-server 部署状态
+- 部署 ruyi-server
+- 构建 ruyi-server
+- 诊断 ruyi-server 部署
+- 显示 ruyi-server 脚本环境变量
+
+【路径配置组 6 条全部缺失】
+- 路径配置向导（推荐）
+- 检查路径是否存在
+- 选择路径配置
+- 打开路径设置 (settings.json)
+- 显示当前 Shell 信息
+- 重置路径设置为默认

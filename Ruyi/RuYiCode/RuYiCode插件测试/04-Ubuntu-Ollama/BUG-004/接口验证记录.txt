@@ -1,0 +1,31 @@
+=== Environment ===
+Ubuntu 24.04.4 LTS on WSL
+
+=== Ollama version ===
+ollama version is 0.40.1
+
+=== Ollama models ===
+NAME                  ID              SIZE      MODIFIED
+qwen2.5-coder:1.5b    d7372fd82851    986 MB    24 minutes ago   
+
+=== GET /v1 ===
+HTTP/1.1 404 Not Found
+Content-Type: text/plain
+Content-Length: 18
+
+404 page not found
+
+=== GET /models ===
+HTTP/1.1 404 Not Found
+Content-Type: text/plain
+Content-Length: 18
+
+404 page not found
+
+=== GET /v1/models ===
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 114
+
+{"object":"list","data":[{"id":"qwen2.5-coder:1.5b",
+"object":"model","created":1791433986,"owned_by":"library"}]}

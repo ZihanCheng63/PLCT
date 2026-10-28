@@ -1,0 +1,52 @@
+RuYiCode 插件测试总结
+
+一、测试对象
+  插件：RuYiCode-AI coding agent（local.ruyi-code）0.4.9
+  引擎：Ollama / llama.cpp
+  平台：Windows 11、Ubuntu 24.04.5 LTS
+
+二、测试范围
+  依据 RuYiCode 插件完整测试流程 执行，覆盖：
+  1. 通用准备（VS Code、插件安装与激活检查）
+  2. Windows 平台测试（2.1 llama.cpp / 2.2 Ollama）
+  3. Ubuntu 平台测试（3.1 llama.cpp / 3.2 Ollama）
+  4. 部分功能验收用例
+  未覆盖：ruyi-server（无预置 rax 环境 + 插件命令缺失）
+
+三、测试结论
+  1. llama.cpp 链路：Windows 与 Ubuntu 均通过
+     - 引擎自测、插件连接、对话均正常
+  2. Ollama 链路：插件连接失败
+     - Ollama 服务侧经 curl 验证正常（/v1/models 返回 200）
+     - 插件返回 HTTP 404，状态栏显示「AI 离线」
+     - Windows 与 Ubuntu 均复现
+  3. ruyi-server：未测
+     - 无预置 rax 模型与相关构建产物
+     - 插件命令面板缺失 ruyi-server 部署组与路径配置组共 13 条命令
+
+四、缺陷清单
+  编号      严重程度   现象
+  BUG-003   严重       插件连接 Ollama 返回 404（跨平台）
+                       BUG-005 为 Ubuntu 侧同一缺陷的独立复现
+  BUG-002   一般       扩展详情页版本号不一致
+                       （README 显示 0.4.6，实际安装 0.4.9）
+  BUG-004   严重       命令面板命令缺失
+                       （文档要求 29 条，实际约 17 条，缺 13 条）
+
+五、关键证据
+  1. BUG-003 / BUG-004
+     - 三平台复现：Windows、WSL、Ubuntu（VMware）
+     - Ollama 服务侧 curl 验证：/v1/models 返回 200 + 模型 JSON
+     - 对照验证：llama.cpp 在 Windows 与 Ubuntu 均连接成功
+     证据目录：测试记录\04-Ubuntu-Ollama\BUG-005\
+               测试记录\...\BUG-003\
+  2. BUG-001
+     - 扩展详情页截图（README 0.4.6 vs 安装栏 0.4.9）
+     证据目录：测试记录\...\BUG-002\
+  3. BUG-002
+     - 命令面板搜索 RuyiCode 截图（约 17 条）
+     证据目录：测试记录\...\BUG-004\
+
+
+                             测试人：程子函
+                             日期：2026-10-08

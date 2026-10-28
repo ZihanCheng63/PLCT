@@ -1,0 +1,3 @@
+[1:33:09 PM] Shell 探测完成：Local bash (/bin/bash, linux) (linux-native)
+[memory] 已初始化记忆目录：/home/pingguo/.ruyicode/memory（新建 7 项）
+[memory] 默认位置（未单独设置）：/home/pingguo/.ruyicode/memory

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>RuYiCode 测试记录表</title>
+<style>
+  body{margin:0;background:#f5f6f8;color:#1f2328;font:14px/1.7 "Microsoft YaHei",sans-serif}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px 18px 60px}
+  h1{font-size:22px;margin:0 0 18px;padding:14px 18px;background:#0b62d0;color:#fff;border-radius:8px;letter-spacing:.5px;box-shadow:0 2px 6px rgba(11,98,208,.2)}
+  h2{font-size:18px;margin:28px 0 10px;padding-left:10px;border-left:4px solid #0b62d0}
+  table{width:100%;border-collapse:collapse;margin:8px 0;background:#fff;font-size:13.5px}
+  th,td{border:1px solid #d0d7de;padding:8px 10px;text-align:left;vertical-align:top}
+  thead th{background:#0b62d0;color:#fff;font-weight:700;letter-spacing:.3px;border-color:#0b62d0;text-align:center}
+  tbody th{background:#eaf3ff;color:#0a3d80;font-weight:600;white-space:nowrap}
+  td.c{text-align:center}
+  tbody tr:nth-child(even) td{background:#fafbfc}
+  input[type=text],textarea{width:100%;border:0;background:transparent;font:inherit;color:inherit;padding:2px 0;outline:none}
+  input[type=text]:focus,textarea:focus{background:#fffbe6}
+  textarea{resize:vertical;min-height:36px;font-family:inherit}
+  label{margin-right:12px;cursor:pointer}
+  input[type=checkbox],input[type=radio]{margin-right:3px;vertical-align:middle}
+  td.c label{display:block;margin:0 0 2px 0}
+  .note{color:#57606a;font-size:13px}
+  @media print{body{background:#fff} thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>测试记录表</h1>
+
+<!-- ============ 1 环境记录 ============ -->
+<h2>1 环境记录</h2>
+<table>
+  <tbody>
+    <tr>
+      <th style="width:22%">测试人 / 日期</th>
+      <td>程子函／ 2026-10-08</td>
+    </tr>
+    <tr>
+      <th>操作系统与版本</th>
+      <td>Windows 11 / Ubuntu 24.04.5 LTS</td>
+    </tr>
+    <tr>
+      <th>VS Code 版本</th>
+      <td>1.141.0</td>
+    </tr>
+    <tr>
+      <th>插件版本</th>
+      <td>0.4.9(实测:0.4.6)</td>
+    </tr>
+    <tr>
+      <th>CPU / 内存 / 显卡</th>
+      <td>Intel Core i7-14650HX / 16 GB DDR5 5600MHz / NVIDIA GeForce RTX 5060 Laptop GPU 8GB 专用显存</td>
+    </tr>
+    <tr>
+      <th>测试引擎</th>
+      <td>
+        <label><input type="checkbox" checked> llama.cpp</label>
+        <label><input type="checkbox" checked> Ollama</label>
+        <label><input type="checkbox"> ruyi-server(无预置 rax 环境，未测)</label>
+      </td>
+    </tr>
+    <tr>
+      <th>模型名称与大小</th>
+      <td>Ollama:qwen2.5-coder:1.5b(986 MB);llama.cpp:qwen2.5-1.5b-instruct-q4_k_m.gguf(1.1 GB)</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ============ 2 三引擎结果汇总 ============ -->
+<h2>2 三引擎结果汇总</h2>
+<table>
+  <thead>
+    <tr>
+      <th>引擎</th>
+      <th>平台</th>
+      <th class="c">引擎自测<br><span style="font-weight:400">(curl/浏览器)</span></th>
+      <th class="c">插件连接</th>
+      <th class="c">对话</th>
+      <th class="c">补全</th>
+      <th>备注</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>llama.cpp</td><td>Windows</td>
+      <td class="c"><label><input type="checkbox" checked>正常</label><label><input type="checkbox">异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox" checked>正常</label><label><input type="checkbox">异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox" checked>正常</label><label><input type="checkbox">异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td>已连接，流式回答正常。</td>
+    </tr>
+    <tr>
+      <td>Ollama</td><td>Windows</td>
+      <td class="c"><label><input type="checkbox" checked>正常</label><label><input type="checkbox">异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox" checked>异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td>插件连接 Ollama 返回 HTTP 404,对话面板显示「未检测到模型」+ 红点。</td>
+    </tr>
+    <tr>
+      <td>ruyi-server</td><td>Windows</td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td>未测：无预置 rax 环境 + 命令缺失</td>
+    </tr>
+    <tr>
+      <td>llama.cpp</td><td>Ubuntu</td>
+      <td class="c"><label><input type="checkbox" checked>正常</label><label><input type="checkbox">异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox" checked>正常</label><label><input type="checkbox">异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox" checked>正常</label><label><input type="checkbox">异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td>Ubuntu 上已连接，对话正常。</td>
+    </tr>
+    <tr>
+      <td>Ollama</td><td>Ubuntu</td>
+      <td class="c"><label><input type="checkbox" checked>正常</label><label><input type="checkbox">异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox" checked>异常</label><label><input type="checkbox">未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td>插件连接 Ollama 返回 HTTP 404,对话面板显示「未检测到模型」+ 红点。</td>
+    </tr>
+    <tr>
+      <td>ruyi-server</td><td>Ubuntu</td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td class="c"><label><input type="checkbox">正常</label><label><input type="checkbox">异常</label><label><input type="checkbox" checked>未测</label></td>
+      <td>未测：无预置 rax 环境 + 命令缺失</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ============ 3 新增能力验收 ============ -->
+ <h2>3 0.4.5 → 0.4.9 新增能力验收（本轮重点）</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width:12%">版本</th>
+      <th>能力</th>
+      <th style="width:16%">对应用例</th>
+      <th style="width:20%">结论</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0.4.9</td>
+      <td>记忆系统（三层存储、自动注入、目录可自定义、会话续聊、提炼需人工采纳）</td>
+      <td class="c">G1 ~ G8</td>
+      <td class="c">
+        <label><input type="checkbox">通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox" checked>未测</label>
+      </td>
+    </tr>
+    <tr>
+      <td>0.4.8</td>
+      <td>对话面板工具栏不被裁切、刷新同步连接状态、圆点三态</td>
+      <td class="c">B1 / B4 / B5</td>
+      <td class="c">
+        <label><input type="checkbox">通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox" checked>未测</label>
+      </td>
+    </tr>
+    <tr>
+      <td>0.4.8</td>
+      <td>Esc 停止后保留已输出内容</td>
+      <td class="c">B3</td>
+      <td class="c">
+        <label><input type="checkbox">通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox" checked>未测</label>
+      </td>
+    </tr>
+    <tr>
+      <td>0.4.8</td>
+      <td>多轮记忆恢复（助手回答不再写占位串）</td>
+      <td class="c">B6</td>
+      <td class="c">
+        <label><input type="checkbox">通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox" checked>未测</label>
+      </td>
+    </tr>
+    <tr>
+      <td>0.4.8</td>
+      <td>生成注释不再混入围栏与重复代码</td>
+      <td class="c">C3</td>
+      <td class="c">
+        <label><input type="checkbox">通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox" checked>未测</label>
+      </td>
+    </tr>
+    <tr>
+      <td>0.4.8</td>
+      <td>CodeLens 语言覆盖扩大 + 「解释/重构」精确定位到函数</td>
+      <td class="c">C5 / C6</td>
+      <td class="c">
+        <label><input type="checkbox">通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox" checked>未测</label>
+      </td>
+    </tr>
+    <tr>
+      <td>0.4.8</td>
+      <td>「在对话中讨论选中代码」不残留转圈气泡</td>
+      <td class="c">C7</td>
+      <td class="c">
+        <label><input type="checkbox">通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox" checked>未测</label>
+      </td>
+    </tr>
+    <tr>
+      <td>0.4.7</td>
+      <td>路径配置向导 + 只填根目录自动推导 + 检查路径是否存在</td>
+      <td class="c">H1 ~ H3 / E5</td>
+      <td class="c">
+        <label><input type="checkbox">通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox" checked>未测</label>
+      </td>
+    </tr>
+    <tr>
+      <td>0.4.5 / 0.4.6</td>
+      <td>界面文案去掉彩色装饰图标；保留无色彩符号 ↻ ✓</td>
+      <td class="c">B1 / C5(目视)</td>
+      <td class="c">
+        <label><input type="checkbox" checked>通过</label>
+        <label><input type="checkbox">失败</label>
+        <label><input type="checkbox">未测</label>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ============ 4 缺陷记录 ============ -->
+<h2>4 缺陷记录</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width:8%">编号</th>
+      <th style="width:14%">严重程度</th>
+      <th>现象描述</th>
+      <th>复现步骤</th>
+      <th>截图/日志位置</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- 缺陷 1：BUG-001 -->
+    <tr>
+      <td class="c">1</td>
+      <td>
+        <label><input type="checkbox">致命</label>
+        <label><input type="checkbox" checked>严重</label><br>
+        <label><input type="checkbox">一般</label>
+        <label><input type="checkbox">建议</label>
+      </td>
+      <td>插件连接 Ollama 失败，探测端点返回 <b>HTTP 404: 404 page not found</b>（跨平台）。<br>状态栏显示「⚠ AI 离线」，对话面板显示「未检测到模型」+ 红点。当前端点:http://127.0.0.1:11434/v1</td>
+      <td>1. 安装 Ollama,<code>ollama pull qwen2.5-coder:1.5b</code> 成功；<br>2. <code>curl http://127.0.0.1:11434/v1/models</code> 返回 200 + 模型 JSON;<br>3. VS Code 设置 engineType=ollama、endpoint=http://127.0.0.1:11434/v1；<br>4. 点状态栏徽章 → 404 提示。</td>
+      <td>缺陷记录-BUG-001\（含 Windows / Ubuntu 两个子目录）<br>对照验证:llama.cpp 在 Windows 与 Ubuntu 上均连接成功，证明问题特定于 ollama 模式。</td>
+    </tr>
+    <!-- 缺陷 2：BUG-002 -->
+    <tr>
+      <td class="c">2</td>
+      <td>
+        <label><input type="checkbox">致命</label>
+        <label><input type="checkbox">严重</label><br>
+        <label><input type="checkbox" checked>一般</label>
+        <label><input type="checkbox">建议</label>
+      </td>
+      <td>扩展详情页版本号不一致：右上角「安装」栏显示 <b>0.4.9</b>（正确），说明文字表格「当前版本」显示 <b>0.4.6</b>(错误，来自 README)。</td>
+      <td>1. 扩展面板搜索 RuyiCode → 打开详情页；<br>2. 「细节」标签页说明表格显示 0.4.6:<br>3. 页面右侧「安装」栏显示 0.4.9。</td>
+      <td>缺陷记录-BUG-002\<br>复现环境:Windows、Ubuntu</td>
+    </tr>
+    <!-- 缺陷 3：BUG-004 -->
+    <tr>
+      <td class="c">4</td>
+      <td>
+        <label><input type="checkbox">致命</label>
+        <label><input type="checkbox" checked>严重</label><br>
+        <label><input type="checkbox">一般</label>
+        <label><input type="checkbox">建议</label>
+      </td>
+      <td>命令面板命令数量缺失：文档 7.2 列出 29 条命令，实际 <b>Ctrl+Shift+P 搜 RuyiCode 只显示 17 条</b>，缺失 13 条（ruyi-server 部署组 7 条 + 路径配置组 6 条）。</td>
+      <td>1. VS Code 中按 Ctrl+Shift+P;<br>2. 输入 RuyiCode;<br>3. 数下拉列表条数 → 不足 29 条；<br>4. 对照文档 7.2 → 缺 13 条。</td>
+      <td>缺陷记录-BUG-004\<br>复现环境:Windows、Ubuntu</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+</body>
+</html>

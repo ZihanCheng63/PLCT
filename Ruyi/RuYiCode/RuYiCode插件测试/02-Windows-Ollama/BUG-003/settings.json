@@ -1,0 +1,8 @@
+{
+    "ruyi.ruyiPath": "/usr/local/bin/ruyi",
+    "ruyi.checkForUpdates": false,
+    "ruyi.telemetry": false,
+    "workbench.colorTheme": "Dark Modern",
+    "ruyiCode.endpoint": "http://127.0.0.1:11434/v1",
+    "ruyiCode.engineType": "ollama"
+}

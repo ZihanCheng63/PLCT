@@ -1,0 +1,2 @@
+[10:56:20] Shell 探测完成：WSL (default distro) (wsl-detected)
+[memory] 默认位置（未单独设置）：C:/Users/38868/.ruyicode/memory
